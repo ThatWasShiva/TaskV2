@@ -1,0 +1,316 @@
+<UserControl x:Class="TaskManager.UI.Views.ProcessesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:TaskManager.UI.Components"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Metric cards -->
+            <RowDefinition Height="Auto"/>  <!-- Toolbar -->
+            <RowDefinition Height="*"/>     <!-- Process list -->
+            <RowDefinition Height="Auto"/>  <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Metric Cards ───────────────────────────────────────────── -->
+        <Grid Grid.Row="0" Margin="12,12,12,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <c:MetricCard Grid.Column="0" Margin="0,0,6,0"
+                Label="CPU" Icon="💻" Unit="%"
+                Value="{Binding CpuPercent, StringFormat='{}{0:F0}'}"
+                Percent="{Binding CpuPercent}"
+                SubLabel="{Binding CpuSubLabel}"
+                AccentBrush="{StaticResource CpuBrush}"/>
+
+            <c:MetricCard Grid.Column="1" Margin="3,0,3,0"
+                Label="MEMORY" Icon="🧮" Unit=" GB"
+                Value="{Binding RamUsedGB, StringFormat='{}{0:F1}'}"
+                Percent="{Binding RamPercent}"
+                SubLabel="{Binding RamSubLabel}"
+                AccentBrush="{StaticResource RamBrush}"/>
+
+            <c:MetricCard Grid.Column="2" Margin="3,0,3,0"
+                Label="GPU" Icon="🎮" Unit="%"
+                Value="{Binding GpuPercent, StringFormat='{}{0:F0}'}"
+                Percent="{Binding GpuPercent}"
+                SubLabel="{Binding GpuName}"
+                AccentBrush="{StaticResource GpuBrush}"/>
+
+            <c:MetricCard Grid.Column="3" Margin="6,0,0,0"
+                Label="NETWORK" Icon="🌐" Unit=" MB/s"
+                Value="{Binding NetworkMBps, StringFormat='{}{0:F1}'}"
+                Percent="{Binding NetworkPercent}"
+                SubLabel="{Binding NetworkSubLabel}"
+                AccentBrush="{StaticResource NetBrush}"/>
+        </Grid>
+
+        <!-- ── Toolbar ────────────────────────────────────────────────── -->
+        <Border Grid.Row="1" Margin="12,0,12,8"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="10,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Type filter tabs -->
+                <Button Grid.Column="0" x:Name="BtnAll"
+                        Content="All" Style="{StaticResource FluentButton}"
+                        Margin="0,0,4,0" Click="OnFilterAll"/>
+                <Button Grid.Column="1" x:Name="BtnApps"
+                        Content="Apps" Style="{StaticResource FluentButton}"
+                        Margin="0,0,4,0" Click="OnFilterApps"/>
+                <Button Grid.Column="2" x:Name="BtnBackground"
+                        Content="Background" Style="{StaticResource FluentButton}"
+                        Margin="0,0,4,0" Click="OnFilterBackground"/>
+                <Button Grid.Column="3" x:Name="BtnSystem"
+                        Content="System" Style="{StaticResource FluentButton}"
+                        Click="OnFilterSystem"/>
+
+                <!-- Search -->
+                <Border Grid.Column="4" Margin="12,0"
+                        Background="{StaticResource Surface2Brush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1" CornerRadius="6" Padding="8,4">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🔍" Foreground="{StaticResource TextTertiaryBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBox x:Name="SearchBox" Width="180"
+                                 Style="{StaticResource FluentTextBox}"
+                                 BorderThickness="0" Background="Transparent"
+                                 Text="{Binding ProcessVM.SearchQuery,
+                                        UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Search processes"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Actions -->
+                <Button Grid.Column="5" Content="↻ Refresh"
+                        Style="{StaticResource FluentButton}" Margin="0,0,4,0"
+                        Click="OnRefresh"/>
+                <Button Grid.Column="6" Content="📸 Snapshot"
+                        Style="{StaticResource FluentButton}" Margin="0,0,4,0"
+                        Command="{Binding ProcessVM.SnapshotCommand}"/>
+                <Button Grid.Column="7" Content="⊗ End Task"
+                        Style="{StaticResource DangerButton}"
+                        Command="{Binding ProcessVM.KillCommand}"
+                        IsEnabled="{Binding ProcessVM.HasSelection}"/>
+            </Grid>
+        </Border>
+
+        <!-- ── Process ListView ───────────────────────────────────────── -->
+        <ListView Grid.Row="2" Margin="12,0,12,0"
+                  Style="{StaticResource ProcessListView}"
+                  ItemContainerStyle="{StaticResource ProcessListViewItem}"
+                  ItemsSource="{Binding ProcessVM.Processes}"
+                  SelectedItem="{Binding ProcessVM.SelectedProcess, Mode=TwoWay}"
+                  MouseRightButtonUp="OnRightClick">
+
+            <ListView.View>
+                <GridView ColumnHeaderContainerStyle="{StaticResource ColumnHeader}">
+
+                    <GridViewColumn Width="220">
+                        <GridViewColumnHeader Content="Name" Tag="Name"
+                                              Click="OnColumnHeaderClick"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="10,6">
+                                    <Ellipse Width="7" Height="7" Margin="0,0,8,0"
+                                             VerticalAlignment="Center">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill"
+                                                        Value="{StaticResource GreenBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}"
+                                                                 Value="Suspended">
+                                                        <Setter Property="Fill"
+                                                                Value="{StaticResource YellowBrush}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}"
+                                                                 Value="NotResponding">
+                                                        <Setter Property="Fill"
+                                                                Value="{StaticResource RedBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DisplayName}"
+                                                   FontWeight="Medium"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Style="{StaticResource CaptionText}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="90">
+                        <GridViewColumnHeader Content="CPU %" Tag="CpuPercent"
+                                              Click="OnColumnHeaderClick"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding CpuPercent, StringFormat='{}{0:F1}%'}"
+                                           Margin="10,0" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="90">
+                        <GridViewColumnHeader Content="RAM" Tag="RamMB"
+                                              Click="OnColumnHeaderClick"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RamMB, StringFormat='{}{0} MB'}"
+                                           Margin="10,0" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="90">
+                        <GridViewColumnHeader Content="Disk" Tag="DiskMBps"
+                                              Click="OnColumnHeaderClick"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DiskMBps, StringFormat='{}{0:F1} MB/s'}"
+                                           Margin="10,0" VerticalAlignment="Center"
+                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="110">
+                        <GridViewColumnHeader Content="Network" Tag="NetworkMBps"
+                                              Click="OnColumnHeaderClick"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="10,0" VerticalAlignment="Center">
+                                    <TextBlock Foreground="{StaticResource GreenBrush}"
+                                               FontSize="11">
+                                        <Run Text="↑"/>
+                                        <Run Text="{Binding NetworkUpMBps,
+                                                   StringFormat='{}{0:F1}'}"/>
+                                    </TextBlock>
+                                    <TextBlock Foreground="{StaticResource AccentLightBrush}"
+                                               FontSize="11">
+                                        <Run Text="↓"/>
+                                        <Run Text="{Binding NetworkDownMBps,
+                                                   StringFormat='{}{0:F1}'}"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="100">
+                        <GridViewColumnHeader Content="Power Impact" Tag="PowerImpact"
+                                              Click="OnColumnHeaderClick"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource ImpactBadge}"
+                                        Margin="10,4" x:Name="ImpactBorder">
+                                    <TextBlock x:Name="ImpactText" FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Text="{Binding PowerImpact}"/>
+                                    <Border.Style>
+                                        <Style TargetType="Border"
+                                               BasedOn="{StaticResource ImpactBadge}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding PowerImpact}"
+                                                             Value="Low">
+                                                    <Setter Property="Background"
+                                                            Value="{StaticResource GreenSubtleBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding PowerImpact}"
+                                                             Value="VeryHigh">
+                                                    <Setter Property="Background"
+                                                            Value="{StaticResource RedSubtleBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="70">
+                        <GridViewColumnHeader Content="PID"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Pid}"
+                                           Style="{StaticResource MonoText}"
+                                           Margin="10,0" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- ── Context Menu ───────────────────────────────────────────── -->
+        <ListView.Resources>
+            <ContextMenu x:Key="ProcessContextMenu">
+                <MenuItem Header="📂 Open File Location" Click="OnOpenFileLocation"/>
+                <MenuItem Header="⚙️ Set Priority" x:Name="PriorityMenu">
+                    <MenuItem Header="Realtime"    Tag="Realtime"    Click="OnSetPriority"/>
+                    <MenuItem Header="High"        Tag="High"        Click="OnSetPriority"/>
+                    <MenuItem Header="Above Normal" Tag="Above Normal" Click="OnSetPriority"/>
+                    <MenuItem Header="Normal"      Tag="Normal"      Click="OnSetPriority"/>
+                    <MenuItem Header="Below Normal" Tag="Below Normal" Click="OnSetPriority"/>
+                    <MenuItem Header="Idle"        Tag="Idle"        Click="OnSetPriority"/>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="⏸️ Suspend"
+                          Command="{Binding ProcessVM.SuspendCommand}"/>
+                <MenuItem Header="▶️ Resume"
+                          Command="{Binding ProcessVM.ResumeCommand}"/>
+                <Separator/>
+                <MenuItem Header="⊗ End Task" Foreground="{StaticResource RedBrush}"
+                          Command="{Binding ProcessVM.KillCommand}"/>
+            </ContextMenu>
+        </ListView.Resources>
+
+        <!-- ── Status Bar ─────────────────────────────────────────────── -->
+        <Border Grid.Row="3" Margin="12,6,12,8"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1" CornerRadius="6" Padding="10,5">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <TextBlock Foreground="{StaticResource TextSecondaryBrush}" FontSize="12">
+                        <Run Text="{Binding ProcessVM.VisibleCount}"/>
+                        <Run Text="processes"/>
+                    </TextBlock>
+                    <TextBlock Text="{Binding ProcessVM.SelectionDetails}"
+                               Foreground="{StaticResource TextTertiaryBrush}"
+                               FontSize="12"/>
+                </StackPanel>
+                <TextBlock HorizontalAlignment="Right"
+                           Foreground="{StaticResource TextTertiaryBrush}" FontSize="12">
+                    <Run Text="Updated:"/>
+                    <Run Text="{Binding LastUpdated}"/>
+                </TextBlock>
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>

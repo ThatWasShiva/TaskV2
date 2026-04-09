@@ -1,0 +1,145 @@
+<UserControl x:Class="TaskManager.UI.Views.AlertsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12">
+
+            <!-- ── Power Scheduler ────────────────────────────────────── -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="📅" FontSize="22"
+                               VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Power Mode Scheduler"
+                                   Style="{StaticResource SubtitleText}" FontSize="14"/>
+                        <TextBlock Text="{Binding AlertsVM.SchedulerDescription}"
+                                   Style="{StaticResource CaptionText}" Margin="0,2,0,6"/>
+
+                        <!-- Battery threshold slider -->
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock Text="Switch to Efficiency below"
+                                       Style="{StaticResource SecondaryText}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <Slider Width="140" Minimum="5" Maximum="80"
+                                    Value="{Binding AlertsVM.BatteryThreshold}"
+                                    TickFrequency="5" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center"/>
+                            <TextBlock VerticalAlignment="Center" Margin="8,0"
+                                       Foreground="{StaticResource AccentLightBrush}">
+                                <Run Text="{Binding AlertsVM.BatteryThreshold,
+                                           StringFormat='{}{0:F0}'}"/>
+                                <Run Text="% battery"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <CheckBox Grid.Column="2" Style="{StaticResource FluentToggle}"
+                              IsChecked="{Binding AlertsVM.SchedulerEnabled}"
+                              VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- ── Alert Rules ────────────────────────────────────────── -->
+            <TextBlock Text="ALERT RULES" Style="{StaticResource LabelText}"
+                       Margin="0,4,0,8"/>
+
+            <ItemsControl ItemsSource="{Binding AlertsVM.Alerts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                            <StackPanel>
+
+                                <!-- Header -->
+                                <Grid Margin="0,0,0,10">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Icon}" FontSize="18"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Label}"
+                                                   Style="{StaticResource SubtitleText}"
+                                                   FontSize="14"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <CheckBox HorizontalAlignment="Right"
+                                              Style="{StaticResource FluentToggle}"
+                                              IsChecked="{Binding IsEnabled}"
+                                              VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- Threshold slider -->
+                                <StackPanel IsEnabled="{Binding IsEnabled}">
+                                    <Grid>
+                                        <TextBlock Text="Alert threshold"
+                                                   Style="{StaticResource SecondaryText}"/>
+                                        <TextBlock HorizontalAlignment="Right"
+                                                   Foreground="{StaticResource AccentLightBrush}"
+                                                   FontSize="13">
+                                            <Run Text="{Binding Threshold,
+                                                       StringFormat='{}{0:F0}'}"/>
+                                            <Run Text="%"/>
+                                        </TextBlock>
+                                    </Grid>
+                                    <Slider Margin="0,4,0,0" Minimum="50" Maximum="100"
+                                            Value="{Binding Threshold}"
+                                            TickFrequency="5" IsSnapToTickEnabled="True"/>
+
+                                    <!-- Sustain seconds -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <TextBlock Text="Sustain for"
+                                                   Style="{StaticResource SecondaryText}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                                        <TextBox Width="50"
+                                                 Style="{StaticResource FluentTextBox}"
+                                                 Text="{Binding SustainSeconds}"
+                                                 Padding="6,3"/>
+                                        <TextBlock Text="seconds before alerting"
+                                                   Style="{StaticResource SecondaryText}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="8,0,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Auto mode switch -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <CheckBox Style="{StaticResource FluentToggle}"
+                                                  IsChecked="{Binding AutoSwitchMode}"
+                                                  Content="Auto-switch to Efficiency mode"
+                                                  Foreground="{StaticResource TextSecondaryBrush}"
+                                                  FontSize="12"/>
+                                    </StackPanel>
+
+                                    <!-- Description -->
+                                    <TextBlock Text="{Binding Description}"
+                                               Style="{StaticResource CaptionText}"
+                                               Margin="0,8,0,0"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- ── Save / Reset ───────────────────────────────────────── -->
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,12" HorizontalAlignment="Right">
+                <Button Content="↺ Reset to Defaults"
+                        Style="{StaticResource FluentButton}"
+                        Command="{Binding AlertsVM.ResetCommand}"
+                        Margin="0,0,8,0"/>
+                <Button Content="💾 Save Changes"
+                        Style="{StaticResource AccentButton}"
+                        Command="{Binding AlertsVM.SaveCommand}"/>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

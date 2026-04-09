@@ -1,0 +1,83 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Windows 11 Fluent Design Color Tokens
+         Based on WinUI 3 color ramp — dark theme
+    ═══════════════════════════════════════════════════════════════════ -->
+
+    <!-- Base surfaces -->
+    <Color x:Key="BackgroundColor">#1C1C1C</Color>
+    <Color x:Key="SurfaceColor">#282828</Color>
+    <Color x:Key="Surface2Color">#323232</Color>
+    <Color x:Key="Surface3Color">#3C3C3C</Color>
+    <Color x:Key="CardColor">#2A2A2A</Color>
+
+    <!-- Borders -->
+    <Color x:Key="BorderColor">#404040</Color>
+    <Color x:Key="BorderHoverColor">#606060</Color>
+    <Color x:Key="BorderFocusColor">#0078D4</Color>
+
+    <!-- Text -->
+    <Color x:Key="TextPrimaryColor">#F3F3F3</Color>
+    <Color x:Key="TextSecondaryColor">#ADADAD</Color>
+    <Color x:Key="TextTertiaryColor">#707070</Color>
+    <Color x:Key="TextDisabledColor">#484848</Color>
+
+    <!-- Accent — Windows 11 blue -->
+    <Color x:Key="AccentColor">#0078D4</Color>
+    <Color x:Key="AccentLightColor">#60CDFF</Color>
+    <Color x:Key="AccentDarkColor">#005A9E</Color>
+    <Color x:Key="AccentHoverColor">#106EBE</Color>
+
+    <!-- Semantic colors -->
+    <Color x:Key="GreenColor">#6CCB5F</Color>
+    <Color x:Key="YellowColor">#F0C000</Color>
+    <Color x:Key="OrangeColor">#F07830</Color>
+    <Color x:Key="RedColor">#F04747</Color>
+    <Color x:Key="PurpleColor">#A855F7</Color>
+
+    <!-- Metric-specific -->
+    <Color x:Key="CpuColor">#60CDFF</Color>
+    <Color x:Key="RamColor">#A855F7</Color>
+    <Color x:Key="GpuColor">#6CCB5F</Color>
+    <Color x:Key="NetColor">#F07830</Color>
+    <Color x:Key="DiskColor">#F0C000</Color>
+
+    <!-- Brushes from colors -->
+    <SolidColorBrush x:Key="BackgroundBrush"       Color="{StaticResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="SurfaceBrush"          Color="{StaticResource SurfaceColor}"/>
+    <SolidColorBrush x:Key="Surface2Brush"         Color="{StaticResource Surface2Color}"/>
+    <SolidColorBrush x:Key="Surface3Brush"         Color="{StaticResource Surface3Color}"/>
+    <SolidColorBrush x:Key="CardBrush"             Color="{StaticResource CardColor}"/>
+    <SolidColorBrush x:Key="BorderBrush"           Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="BorderHoverBrush"      Color="{StaticResource BorderHoverColor}"/>
+    <SolidColorBrush x:Key="BorderFocusBrush"      Color="{StaticResource BorderFocusColor}"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush"      Color="{StaticResource TextPrimaryColor}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush"    Color="{StaticResource TextSecondaryColor}"/>
+    <SolidColorBrush x:Key="TextTertiaryBrush"     Color="{StaticResource TextTertiaryColor}"/>
+    <SolidColorBrush x:Key="TextDisabledBrush"     Color="{StaticResource TextDisabledColor}"/>
+    <SolidColorBrush x:Key="AccentBrush"           Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentLightBrush"      Color="{StaticResource AccentLightColor}"/>
+    <SolidColorBrush x:Key="AccentHoverBrush"      Color="{StaticResource AccentHoverColor}"/>
+    <SolidColorBrush x:Key="GreenBrush"            Color="{StaticResource GreenColor}"/>
+    <SolidColorBrush x:Key="YellowBrush"           Color="{StaticResource YellowColor}"/>
+    <SolidColorBrush x:Key="OrangeBrush"           Color="{StaticResource OrangeColor}"/>
+    <SolidColorBrush x:Key="RedBrush"              Color="{StaticResource RedColor}"/>
+    <SolidColorBrush x:Key="PurpleBrush"           Color="{StaticResource PurpleColor}"/>
+    <SolidColorBrush x:Key="CpuBrush"              Color="{StaticResource CpuColor}"/>
+    <SolidColorBrush x:Key="RamBrush"              Color="{StaticResource RamColor}"/>
+    <SolidColorBrush x:Key="GpuBrush"              Color="{StaticResource GpuColor}"/>
+    <SolidColorBrush x:Key="NetBrush"              Color="{StaticResource NetColor}"/>
+    <SolidColorBrush x:Key="DiskBrush"             Color="{StaticResource DiskColor}"/>
+
+    <!-- Semi-transparent overlays -->
+    <SolidColorBrush x:Key="OverlayLightBrush"    Color="#20FFFFFF"/>
+    <SolidColorBrush x:Key="OverlayMediumBrush"   Color="#40FFFFFF"/>
+    <SolidColorBrush x:Key="AccentSubtleBrush"     Color="#200078D4"/>
+    <SolidColorBrush x:Key="GreenSubtleBrush"      Color="#206CCB5F"/>
+    <SolidColorBrush x:Key="RedSubtleBrush"        Color="#20F04747"/>
+    <SolidColorBrush x:Key="YellowSubtleBrush"     Color="#20F0C000"/>
+
+</ResourceDictionary>
